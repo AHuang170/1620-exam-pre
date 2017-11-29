@@ -1,0 +1,221 @@
+/*=================================================================START OF controls style=================================================================*/
+#controls{
+    position: fixed;
+    top: 0px;
+    left: 150px;
+    
+    height: 50px;
+    width: 640px;
+    
+    border-style: solid;
+    border-width: 2px;
+    border-color: black;
+    
+    border-top-style: hidden;
+}
+
+.text_input1{
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    margin: auto;
+    height: 20px;
+    width: 120px;
+}
+
+#url_input{
+    left: 10px;
+   
+}
+
+#title_input{
+    left: 140px;
+}
+
+.ctrl_button{
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    margin: auto;
+    height: 30px;
+    width: 30px;
+    cursor: pointer;
+}
+
+.pointer_img{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+}
+
+#toggle_input{
+    position: absolute;
+    left: -2px;
+    bottom: -29px;
+    height: 25px;
+    width: 25px;
+    border-style: solid;
+    border-width: 2px;
+    border-color: darkgray;
+    border-top-style: hidden;
+    cursor: pointer;
+}
+
+#left_pointer{
+    left: 270px;
+    background-image: url(Img/left_pointer.png);
+    background-size: contain;
+    background-color: dimgray;
+}
+
+#right_pointer{
+    left: 310px;
+    background-image: url(Img/right_pointer.png);
+    background-size: contain;
+    background-color: dimgray;
+}
+
+#up_pointer{
+    left: 350px;
+    background-image: url(Img/top_pointer.png);
+    background-size: contain;
+    background-color: dimgray;
+}
+
+#down_pointer{
+    left: 390px;
+    background-image: url(Img/bottom_pointer.png);
+    background-size: contain;
+    background-color: dimgray;
+}
+
+#plus_button{
+    left: 430px;
+    background-image: url(Img/plus.png);
+    background-size: contain;
+    background-color: burlywood;
+}
+
+#minus_button{
+    left: 470px;
+    background-image: url(Img/minus.png);
+    background-size: contain;
+    background-color: burlywood;
+}
+
+#new_img_button{
+    position: absolute;
+    top: 0px;
+    left: 510px;
+    bottom: 0px;
+    margin: auto;
+    height: 30px;
+    width: 120px;
+}
+/*=================================================================END OF controls style=================================================================*/
+
+/*=================================================================START OF display style=================================================================*/
+#display{
+    position: fixed;
+    top: 100px;
+    left: 150px;
+    width: 80vw;
+    display: inline-block;
+}
+
+.img_container{
+    height: 400px;
+    width: 640px;
+    display: inline-block;
+    cursor: pointer;
+    border-style: ridge;
+    border-width: 4px;
+    border-color: dimgray;
+    
+}
+
+.display_image{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+}
+
+.thumb_title{
+    position: absolute;
+    bottom: 25px;
+    left: 25px;
+    
+    height: 35px;
+    width: 80%;
+    
+    font-weight: bold;
+    font-size: 25pt;
+}
+
+#display_img_containter0{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
+/*=================================================================END OF display style=================================================================*/
+
+/*=================================================================START OF localSave style=================================================================*/
+#localSave{
+    position: fixed;
+    left: 25px;
+    bottom: 25px;
+    height: 50px;
+    width: 200px;
+}
+
+.localSLbutton{
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    margin: auto;
+    height: 30px;
+    width: 80px;
+    background-color: gainsboro;
+}
+
+#local_save_button{
+    left: 20px;
+}
+
+#local_load_button{
+    left: 120px
+}
+/*=================================================================END OF localSave style=================================================================*/
+
+/*=================================================================START OF onlineFetch style=================================================================*/
+#onlineFetch{
+    position: fixed;
+    right: 25px;
+    bottom: 25px;
+    height: 50px;
+    width: 300px;
+}
+
+.onlineSLbutton{
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    margin: auto;
+    height: 30px;;
+    background-color: gainsboro;
+}
+
+#online_save_button{
+    width: 180px;
+    right: 120px;
+}
+
+#online_fetch_button{
+    width: 80px;
+    right: 20px;
+}
+/*=================================================================END OF onlineFetch style=================================================================*/

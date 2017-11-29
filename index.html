@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Title</title>
+        <link href="style.css" rel="stylesheet" type="text/css"/>
+    </head>
+    
+    <body>
+        
+        <div id="controls">
+            <div id="toggle_input">
+                <img id="toggle_img" class="pointer_img" src="Img/bottom_pointer.png"/>
+            </div>
+            
+            <input id="url_input" class="text_input1" type="text" placeholder="url"/>
+            <input id="title_input" class="text_input1" type="text" placeholder="title"/>
+            
+            <button id="left_pointer" class="ctrl_button"></button>
+            <button id="right_pointer" class="ctrl_button"></button>
+            <button id="up_pointer" class="ctrl_button"></button>
+            <button id="down_pointer" class="ctrl_button"></button>
+            
+            <button id="plus_button" class="ctrl_button"></button>
+            <button id="minus_button" class="ctrl_button"></button>
+            
+            <button id="new_img_button">New Image</button>
+        </div>
+        
+        
+        
+        <div id="display">
+            <div id="display_img_containter0" class="img_container" onclick="select_image(0)">
+                <img id="display_img0" class="display_image" src="Img/img1.JPG"/>
+                <div id="display_img_title0" class="thumb_title">Title</div>
+            </div>
+        </div>
+        
+        
+        
+        <div id="localSave">
+            <button id="local_save_button" class="localSLbutton">Save</button>
+            <button id="local_load_button" class="localSLbutton">Load</button>
+        </div>
+        
+        
+        
+        <div id="onlineFetch">
+            <button id="online_save_button" class="onlineSLbutton">Save Online</button>
+            <button id="online_fetch_button" class="onlineSLbutton">Fetch</button>
+        </div>
+        
+        <script src="myjs.js"></script>
+    </body>
+</html>

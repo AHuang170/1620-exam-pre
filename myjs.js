@@ -279,6 +279,22 @@ function convert_fetched_arr (input_arr){
     return output_arr;
 }
 
+function toggle_control(){
+    var curr_top_coor = parseInt(get_css_value("controls", 'top'));
+    
+    if(curr_top_coor == 0){
+        document.getElementById("controls").style.top = '-52px';
+    }
+    else{
+        document.getElementById("controls").style.top = '0px';
+    }
+    
+}
+
+if(!initialized){
+    initialize();
+}
+
 document.body.addEventListener("keydown", function(ev){
     //check_keyCode(ev.keyCode);
     var input_key = ev.keyCode;
@@ -329,6 +345,14 @@ document.getElementById("minus_button").addEventListener("mousedown", function()
     resize_img("minus");
 });
 
+document.getElementById("toggle_input").addEventListener("click", function(){
+    toggle_control();
+});
+
+document.getElementById("toggle_input").addEventListener("mouseover", function(){
+    toggle_control();
+});
+
 document.getElementById("url_input").addEventListener("keyup", function(ev){
     var entered_url = document.getElementById("url_input").value;
     if(ev.keyCode == enter_keyCode){
@@ -362,10 +386,6 @@ document.getElementById("new_img_button").addEventListener("click", function(){
     var img_width = parseInt(get_css_value(selected_image_id + current_selected_num, 'width'));
     append_new_image(entered_url, entered_title, img_top, img_left, img_height, img_width);
 });
-
-if(!initialized){
-    initialize();
-}
 
 document.getElementById("local_save_button").addEventListener("click", function(){
     var arrText = JSON.stringify(display_img_arr);

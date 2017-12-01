@@ -12,6 +12,7 @@
     border-color: black;
     
     border-top-style: hidden;
+    transition: 150ms;
 }
 
 .text_input1{

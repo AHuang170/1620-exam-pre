@@ -1,5 +1,6 @@
 /*=================================================================START OF controls style=================================================================*/
 #controls{
+    z-index: 999;
     position: fixed;
     top: 0px;
     left: 150px;
@@ -13,6 +14,7 @@
     
     border-top-style: hidden;
     transition: 150ms;
+    background-color: white;
 }
 
 .text_input1{
@@ -62,6 +64,7 @@
     border-color: darkgray;
     border-top-style: hidden;
     cursor: pointer;
+    background-color: white;
 }
 
 #left_pointer{
@@ -122,19 +125,20 @@
     position: fixed;
     top: 100px;
     left: 150px;
+    height: 100vh;
     width: 80vw;
-    display: inline-block;
+    display: block;
 }
 
 .img_container{
+    position: relative;
     height: 400px;
     width: 640px;
-    display: inline-block;
     cursor: pointer;
     border-style: ridge;
     border-width: 4px;
     border-color: dimgray;
-    
+    display: inline-block;
 }
 
 .display_image{
@@ -158,7 +162,7 @@
 }
 
 #display_img_containter0{
-    position: absolute;
+    position: relative;
     top: 0px;
     left: 0px;
 }

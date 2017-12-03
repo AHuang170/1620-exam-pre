@@ -15,7 +15,7 @@ var vertical_size_delta = 10;
 var selected_image_id = "display_img_containter";
 var current_image_num = 0;
 
-var current_selected_num = 0;
+var current_selected_num = -1;
 
 var initialized = false;
 
@@ -23,8 +23,17 @@ var display_img_arr = [];
 
 var mlink = "http://www.bcitdigitalarts.ca/vote/server/image.php";
 
+var default_height = 400;
+var default_width = 640;
+
+function getPos(el) {
+    
+    for (var lx=0, ly=0; el != null; lx += el.offsetLeft, ly += el.offsetTop, el = el.offsetParent);
+    return {x: lx,y: ly};
+}
+
 function initialize(){
-    select_image(current_selected_num);
+    select_image(current_image_num);
     var default_img_obj = {
         source: document.getElementById('display_img0').src,
         title: document.getElementById('display_img_title0').innerHTML,
@@ -36,7 +45,7 @@ function initialize(){
     };
     
     display_img_arr.push(default_img_obj);
-    
+    select_image(-1);
     initialized = true;
 }
 
@@ -47,8 +56,18 @@ function check_keyCode(input_ev){
 function select_image(input_num){
     var prev_selected_num = current_selected_num;
     current_selected_num = input_num;
-    document.getElementById("display_img_containter"+prev_selected_num).style.borderColor = "dimgrey";
-    document.getElementById("display_img_containter"+current_selected_num).style.borderColor = "aqua";
+    
+    if(prev_selected_num == current_selected_num){
+        current_selected_num = -1;
+    }
+    
+    if(current_selected_num != -1){
+        document.getElementById("display_img_containter"+current_selected_num).style.borderColor = "aqua";
+    }
+    
+    if(prev_selected_num != -1){
+        document.getElementById("display_img_containter"+prev_selected_num).style.borderColor = "dimgrey";
+    }
     
 }
 
@@ -56,36 +75,48 @@ function move_img(mode){
     var img_offset = 0;
     var img_coor = 0;
     
+    var ele_id = selected_image_id + current_selected_num;
+    if(current_selected_num == -1){
+        ele_id = "display";
+    }
+    console.log(ele_id);
     switch(mode){
         case "up":
-            img_coor = parseInt(get_css_value(selected_image_id + current_selected_num, 'top'));
+            img_coor = parseInt(get_css_value(ele_id, 'top'));
             img_offset = -1 * horizontal_offset;
-            document.getElementById(selected_image_id + current_selected_num).style.top = img_coor + img_offset + 'px';
+            document.getElementById(ele_id).style.top = img_coor + img_offset + 'px';
             break;
             
         case "down":
-            img_coor = parseInt(get_css_value(selected_image_id + current_selected_num, 'top'));
+            img_coor = parseInt(get_css_value(ele_id, 'top'));
             img_offset = 1 * horizontal_offset;
-            document.getElementById(selected_image_id + current_selected_num).style.top = img_coor + img_offset + 'px';
+            document.getElementById(ele_id).style.top = img_coor + img_offset + 'px';
             break;
             
         case "left":
-            img_coor = parseInt(get_css_value(selected_image_id + current_selected_num, 'left'));
+            img_coor = parseInt(get_css_value(ele_id, 'left'));
             img_offset = -1 * horizontal_offset;
-            document.getElementById(selected_image_id + current_selected_num).style.left = img_coor + img_offset + 'px';
+            document.getElementById(ele_id).style.left = img_coor + img_offset + 'px';
             break;
             
         case "right":
-            img_coor = parseInt(get_css_value(selected_image_id + current_selected_num, 'left'));
+            img_coor = parseInt(get_css_value(ele_id, 'left'));
             img_offset = 1 * horizontal_offset;
-            document.getElementById(selected_image_id + current_selected_num).style.left = img_coor + img_offset + 'px';
+            document.getElementById(ele_id).style.left = img_coor + img_offset + 'px';
             break;
             
     }
-    refresh_data();
+    
+    if(current_selected_num != -1){
+        refresh_data();
+    }
+    
 }
 
 function resize_img(mode){
+    if(current_selected_num == -1){
+        return;
+    }
     var img_height = parseInt(get_css_value(selected_image_id + current_selected_num, 'height'));
     var img_width = parseInt(get_css_value(selected_image_id + current_selected_num, 'width'));
     var img_vert_delta = 0;
@@ -111,6 +142,7 @@ function resize_img(mode){
 }
 
 function get_css_value(element_id, attribute){
+    //console.log(element_id);
     var element = document.getElementById(element_id);
     var ele_style = window.getComputedStyle(element);
     var attr_val = ele_style.getPropertyValue(attribute);
@@ -130,9 +162,14 @@ function append_new_image(entered_url, entered_title, img_top, img_left, img_hei
         
         nDiv.id = "display_img_containter" + current_image_num;
         nDiv.className = "img_container";
-        nDiv.style.position = "absolute";
-        nDiv.style.top = img_top + "px";
-        nDiv.style.left = img_left + "px";
+        //nDiv.style.position = "absolute";
+        if(img_top !=''){
+            nDiv.style.top = img_top + "px";
+        }
+        if(img_left !=''){
+            nDiv.style.left = img_left + "px";
+        }
+        
         nDiv.style.height = img_height + "px";
         nDiv.style.width = img_width + "px";
         nDiv.onclick = function(){
@@ -157,7 +194,14 @@ function append_new_image(entered_url, entered_title, img_top, img_left, img_hei
         var new_obj_source = entered_url;
         var new_obj_title = entered_title;
         var new_obj_id_num = current_image_num;
-        var new_obj = {source: new_obj_source, title: new_obj_title, id_num: new_obj_id_num, top: img_top, left: img_left, height: img_height, width: img_width};
+        
+        var new_obj_curr_coor = Object.assign({}, getPos(document.getElementById(nDiv.id)));
+        
+        var curr_display_coor = Object.assign({}, getPos(document.getElementById("display")));
+        var display_offsetX = curr_display_coor.x;
+        var display_offsetY = curr_display_coor.y;
+        
+        var new_obj = {source: new_obj_source, title: new_obj_title, id_num: new_obj_id_num, top: new_obj_curr_coor.y - display_offsetY, left: new_obj_curr_coor.x - display_offsetX, height: img_height, width: img_width};
         
         for(var i = 0; i < display_img_arr.length; i++){
             if(display_img_arr[i].id_num == new_obj.id_num){
@@ -186,7 +230,7 @@ function populate_display_by_arr(input_arr){
     var work_arr = input_arr.slice();
     var work_obj = {};
     current_image_num = -1;
-    current_selected_num = 0;
+    current_selected_num = -1;
     
     var content_panel = document.getElementById("display")
     
@@ -196,6 +240,9 @@ function populate_display_by_arr(input_arr){
     
     for(var index = 0; index < work_arr.length; index += 1){
         work_obj = Object.assign({}, work_arr[index]);
+        
+        
+        
         display_image(work_obj);
     }
     
@@ -208,37 +255,40 @@ function display_image(input_obj){
     var entered_url = work_obj.source;
     var entered_title = work_obj.title;
     
-    var nDiv = document.createElement('div');
-    var nTit = document.createElement('div');
-    var nImg = document.createElement('img');
-    var nDiv_number = 0;
+    if((entered_url.startsWith("http://") || entered_url.startsWith("https://"))&&(entered_url.endsWith(".jpg") || entered_url.endsWith(".png") || entered_url.endsWith(".gif"))){
+     
+        var nDiv = document.createElement('div');
+        var nTit = document.createElement('div');
+        var nImg = document.createElement('img');
+        var nDiv_number = 0;
 
-    current_image_num += 1;
-    nDiv_number = current_image_num;
+        current_image_num += 1;
+        nDiv_number = current_image_num;
 
-    nDiv.id = "display_img_containter" + current_image_num;
-    nDiv.className = "img_container";
-    nDiv.style.position = "absolute";
-    nDiv.style.top = work_obj.top + 'px';
-    nDiv.style.left = work_obj.left + 'px';
-    nDiv.style.height = work_obj.height + 'px';
-    nDiv.style.width = work_obj.width + 'px';
-    nDiv.onclick = function(){
-        select_image(nDiv_number);
-    };
+        nDiv.id = "display_img_containter" + current_image_num;
+        nDiv.className = "img_container";
+        nDiv.style.position = "absolute";
+        nDiv.style.top = work_obj.top + 'px';
+        nDiv.style.left = work_obj.left + 'px';
+        nDiv.style.height = work_obj.height + 'px';
+        nDiv.style.width = work_obj.width + 'px';
+        nDiv.onclick = function(){
+            select_image(nDiv_number);
+        };
 
-    nTit.id = "display_img_title" + current_image_num;
-    nTit.className = "thumb_title";
-    nTit.innerHTML = entered_title;
+        nTit.id = "display_img_title" + current_image_num;
+        nTit.className = "thumb_title";
+        nTit.innerHTML = entered_title;
 
-    nImg.id = "display_img" + current_image_num;
-    nImg.className = "display_image";
-    nImg.src = entered_url;
+        nImg.id = "display_img" + current_image_num;
+        nImg.className = "display_image";
+        nImg.src = entered_url;
 
-    nDiv.appendChild(nImg);
-    nDiv.appendChild(nTit);
-
-    document.getElementById("display").appendChild(nDiv);
+        nDiv.appendChild(nImg);
+        nDiv.appendChild(nTit);
+        document.getElementById("display").appendChild(nDiv);
+        
+    }
 
     var new_obj_source = entered_url;
     var new_obj_title = entered_title;
@@ -248,14 +298,26 @@ function display_image(input_obj){
 }
 
 function refresh_data(){
-    for(index = 0; index < display_img_arr.length; index++){
-        display_img_arr[index].source = document.getElementById("display_img" + display_img_arr[index].id_num).src;
-        display_img_arr[index].title = document.getElementById("display_img_title" + display_img_arr[index].id_num).innerHTML;
-        display_img_arr[index].top = parseInt(get_css_value(selected_image_id + display_img_arr[index].id_num, 'top'));
-        display_img_arr[index].left = parseInt(get_css_value(selected_image_id + display_img_arr[index].id_num, 'left'));
-        display_img_arr[index].height = parseInt(get_css_value(selected_image_id + display_img_arr[index].id_num, 'height'));
-        display_img_arr[index].width = parseInt(get_css_value(selected_image_id + display_img_arr[index].id_num, 'width'));
-    }
+    //for(index = 0; index < display_img_arr.length; index++){
+    var index = current_selected_num;
+    display_img_arr[index].source = document.getElementById("display_img" + display_img_arr[index].id_num).src;
+    display_img_arr[index].title = document.getElementById("display_img_title" + display_img_arr[index].id_num).innerHTML;
+    
+    var curr_display_coor = Object.assign({}, getPos(document.getElementById("display")));
+    var display_offsetX = curr_display_coor.x;
+    var display_offsetY = curr_display_coor.y;
+    
+    var curr_coor = Object.assign({}, getPos(document.getElementById(selected_image_id + display_img_arr[index].id_num)));
+    console.log(curr_coor);
+    //display_img_arr[index].top = parseInt(get_css_value(selected_image_id + display_img_arr[index].id_num, 'top'));
+    display_img_arr[index].top = (curr_coor.y - display_offsetY);
+    //console.log(display_img_arr[index].top);
+    //display_img_arr[index].left = parseInt(get_css_value(selected_image_id + display_img_arr[index].id_num, 'left'));
+    display_img_arr[index].left = (curr_coor.x - display_offsetX);
+    //console.log(display_img_arr[index].left);
+    display_img_arr[index].height = parseInt(get_css_value(selected_image_id + display_img_arr[index].id_num, 'height'));
+    display_img_arr[index].width = parseInt(get_css_value(selected_image_id + display_img_arr[index].id_num, 'width'));
+    //}
     
 }
 
@@ -289,6 +351,30 @@ function toggle_control(){
         document.getElementById("controls").style.top = '0px';
     }
     
+}
+
+function refresh_all_data(){
+    for(index = 0; index < display_img_arr.length; index++){
+        if(document.getElementById("display_img" + display_img_arr[index].id_num) != null){
+            display_img_arr[index].source = document.getElementById("display_img" + display_img_arr[index].id_num).src;
+            display_img_arr[index].title = document.getElementById("display_img_title" + display_img_arr[index].id_num).innerHTML;
+
+            var curr_display_coor = Object.assign({}, getPos(document.getElementById("display")));
+            var display_offsetX = curr_display_coor.x;
+            var display_offsetY = curr_display_coor.y;
+
+            var curr_coor = Object.assign({}, getPos(document.getElementById(selected_image_id + display_img_arr[index].id_num)));
+            console.log(curr_coor);
+            //display_img_arr[index].top = parseInt(get_css_value(selected_image_id + display_img_arr[index].id_num, 'top'));
+            display_img_arr[index].top = (curr_coor.y - display_offsetY);
+            //console.log(display_img_arr[index].top);
+            //display_img_arr[index].left = parseInt(get_css_value(selected_image_id + display_img_arr[index].id_num, 'left'));
+            display_img_arr[index].left = (curr_coor.x - display_offsetX);
+            //console.log(display_img_arr[index].left);
+            display_img_arr[index].height = parseInt(get_css_value(selected_image_id + display_img_arr[index].id_num, 'height'));
+            display_img_arr[index].width = parseInt(get_css_value(selected_image_id + display_img_arr[index].id_num, 'width'));
+        }
+    }
 }
 
 if(!initialized){
@@ -354,6 +440,9 @@ document.getElementById("toggle_input").addEventListener("mouseover", function()
 });
 
 document.getElementById("url_input").addEventListener("keyup", function(ev){
+    if(current_selected_num == -1){
+        return
+    }
     var entered_url = document.getElementById("url_input").value;
     if(ev.keyCode == enter_keyCode){
         var entered_url = document.getElementById("url_input").value;
@@ -373,23 +462,31 @@ document.getElementById("url_input").addEventListener("keyup", function(ev){
 });
 
 document.getElementById("title_input").addEventListener("input", function(){
-    document.getElementById("display_img_title"+current_selected_num).innerHTML = document.getElementById("title_input").value;
-    refresh_data();
+    if(current_selected_num != -1){
+        document.getElementById("display_img_title"+current_selected_num).innerHTML = document.getElementById("title_input").value;
+        refresh_data();
+    }
+    
 });
 
 document.getElementById("new_img_button").addEventListener("click", function(){
     var entered_url = document.getElementById("url_input").value;
     var entered_title = document.getElementById("title_input").value;
-    var img_top = parseInt(get_css_value(selected_image_id + current_selected_num, 'top'));
-    var img_left = parseInt(get_css_value(selected_image_id + current_selected_num, 'left'));
-    var img_height = parseInt(get_css_value(selected_image_id + current_selected_num, 'height'));
-    var img_width = parseInt(get_css_value(selected_image_id + current_selected_num, 'width'));
+    //var img_top = parseInt(get_css_value(selected_image_id + current_selected_num, 'top'));
+    var img_top = '';
+    //var img_left = parseInt(get_css_value(selected_image_id + current_selected_num, 'left'));
+    var img_left = '';
+    //var img_height = parseInt(get_css_value(selected_image_id + current_selected_num, 'height'));
+    var img_height = default_height;
+    //var img_width = parseInt(get_css_value(selected_image_id + current_selected_num, 'width'));
+    var img_width = default_width;
     append_new_image(entered_url, entered_title, img_top, img_left, img_height, img_width);
 });
 
 document.getElementById("local_save_button").addEventListener("click", function(){
+    refresh_all_data();
     var arrText = JSON.stringify(display_img_arr);
-    console.log(arrText);
+    //console.log(arrText);
     localStorage.setItem("items", arrText);
 });
 
@@ -398,6 +495,8 @@ document.getElementById("local_load_button").addEventListener("click", function(
     var arr = JSON.parse(arrText);
     display_img_arr = [];
     if(arr != null){
+        document.getElementById("display").style.top = '100px';
+        document.getElementById("display").style.left = '150px';
         display_img_arr = arr;
     }
     
@@ -434,7 +533,8 @@ document.getElementById("online_save_button").addEventListener("click", function
 
 document.getElementById("online_fetch_button").addEventListener("click", function(){
     var mdata = new FormData;
-    
+    document.getElementById("display").style.top = '100px';
+    document.getElementById("display").style.left = '150px';
     mdata.append("type", "read");
     
     fetch(mlink, {
